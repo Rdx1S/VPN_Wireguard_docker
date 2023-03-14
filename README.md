@@ -189,6 +189,8 @@ Endpoint = <IP-адрес сервера>:51820
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 21
 ```
+ПРІМЕЧАНИЕ : Address = 10.0.0.2/24 - адресс подклчючение по SSH
+
 В этом файле вы настраиваете интерфейс WireGuard (PrivateKey и Address) и определяете связь между Raspberry Pi и сервером (PublicKey, Endpoint и AllowedIPs). Параметр PersistentKeepalive гарантирует, что соединение останется активным даже при отсутствии активности.
 
 Запустите WireGuard на Raspberry Pi. Выполните следующую команду, чтобы запустить WireGuard:
