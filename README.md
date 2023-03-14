@@ -158,3 +158,56 @@ curl ifconfig.me
 ```
 wg-quick down wg0
 ```
+
+
+# Raspberry client
+Чтобы установить WireGuard на Raspberry Pi в качестве клиента, выполните следующие шаги:
+
+Установите операционную систему на Raspberry Pi. Можно использовать Raspbian, Ubuntu или другую совместимую с ARM операционную систему.
+Установите пакет WireGuard на Raspberry Pi. Для этого откройте терминал на Raspberry Pi и выполните следующую команду:
+```
+sudo apt update
+sudo apt install wireguard
+```
+Эта команда установит все необходимые пакеты для работы WireGuard на Raspberry Pi.
+Создайте ключи для клиента. На Raspberry Pi выполните следующую команду:
+```
+umask 077
+wg genkey | tee privatekey | wg pubkey > publickey
+```
+Эта команда создаст пару ключей: приватный ключ (privatekey) и публичный ключ (publickey).
+
+Настройте конфигурационный файл WireGuard на Raspberry Pi. Создайте новый файл с именем wg0.conf и откройте его для редактирования. Вставьте следующий текст:
+```
+[Interface]
+PrivateKey = <вставьте приватный ключ вашего клиента>
+Address = 10.0.0.2/24
+
+[Peer]
+PublicKey = <вставьте публичный ключ сервера>
+Endpoint = <IP-адрес сервера>:51820
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 21
+```
+В этом файле вы настраиваете интерфейс WireGuard (PrivateKey и Address) и определяете связь между Raspberry Pi и сервером (PublicKey, Endpoint и AllowedIPs). Параметр PersistentKeepalive гарантирует, что соединение останется активным даже при отсутствии активности.
+
+Запустите WireGuard на Raspberry Pi. Выполните следующую команду, чтобы запустить WireGuard:
+```
+sudo wg-quick up wg0
+```
+Теперь ваш Raspberry Pi должен быть подключен к серверу WireGuard.
+
+# Добавление подключения к VPN  в автозапуск
+
+Чтобы автоматически запускать WireGuard при загрузке Raspberry Pi, необходимо добавить соответствующие команды в файл автозапуска.
+Откройте терминал на Raspberry Pi и выполните следующую команду, чтобы открыть файл rc.local для редактирования:
+'''
+sudo nano /etc/rc.local
+'''
+Добавьте следующие команды в файл rc.local, перед строкой "exit 0":
+'''
+sudo wg-quick up wg0
+'''
+Сохраните изменения, нажав "Ctrl+O", а затем выйдите из редактора, нажав "Ctrl+X".
+Перезагрузите Raspberry Pi, чтобы убедиться, что WireGuard запускается автоматически при загрузке.
+Теперь при каждой загрузке Raspberry Pi WireGuard будет автоматически подключаться к серверу, используя конфигурационный файл wg0.conf.
